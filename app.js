@@ -1046,3 +1046,33 @@ function formatDate(d) {
     var months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
     return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
 }
+// ===== HARİTA TAM EKRAN =====
+function toggleMapFullscreen() {
+    document.body.classList.toggle('map-fullscreen');
+}
+
+function closeMapFullscreen() {
+    document.body.classList.remove('map-fullscreen');
+}
+
+document.getElementById('mapFsBtn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    toggleMapFullscreen();
+});
+
+document.getElementById('mapFsClose').addEventListener('click', function (e) {
+    e.stopPropagation();
+    closeMapFullscreen();
+});
+
+// Haritanın boş alanına dokunma → tam ekran
+document.getElementById('mapWrap').addEventListener('click', function (e) {
+    if (e.target.tagName !== 'path' && e.target.tagName !== 'text') {
+        toggleMapFullscreen();
+    }
+});
+
+// ESC tuşu ile çık
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMapFullscreen();
+});
