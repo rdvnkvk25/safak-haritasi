@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asker Şafak Haritası</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14532d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Şafak Haritası">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- PROFİL SEÇİM EKRANI -->
+    <div id="profileScreen" class="screen active">
+        <div class="start-box">
+            <div class="emblem">🎖️</div>
+            <h1>ASKER ŞAFAK HARİTASI</h1>
+            <p class="sub">Profil Seç veya Yeni Oluştur</p>
+
+            <div id="profileList" class="profile-list"></div>
+
+            <button class="btn-go" id="newProfileBtn">➕ YENİ PROFİL OLUŞTUR</button>
+        </div>
+    </div>
+
+    <!-- YENİ PROFİL OLUŞTURMA EKRANI -->
+    <div id="createScreen" class="screen">
+        <div class="start-box">
+            <div class="emblem">🎖️</div>
+            <h1>YENİ PROFİL</h1>
+            <p class="sub">Askerlik bilgilerini gir</p>
+
+            <div class="inp-group">
+                <label>Ad Soyad:</label>
+                <input type="text" id="fullName" placeholder="Örn: Ahmet Yılmaz" maxlength="30">
+            </div>
+
+            <div class="inp-group">
+                <label>Askere Başlangıç Tarihi:</label>
+                <input type="date" id="startDate">
+            </div>
+
+            <div class="inp-group">
+                <label>Askerlik Süresi:</label>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="duration" value="180">
+                        <span>Kısa Dönem (6 ay / 180 gün)</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="duration" value="365" checked>
+                        <span>Uzun Dönem (12 ay / 365 gün)</span>
+                    </label>
+                </div>
+                <small class="info-text" id="izinInfoText">
+                    💡 İzin hakkı: İlk 6 ay için ayda 1 gün (6 gün), sonraki 6 ay için ayda 2 gün (12 gün) = <b>Toplam 18 gün</b>
+                </small>
+            </div>
+
+            <!-- DAĞITIM İZNİ - Sadece kısa dönemde gösterilecek -->
+            <div class="inp-group" id="dagitimGroup" style="display:none;">
+                <label>Acemilik Sonrası 3 Günlük Dağıtım İzni Kullanıldı mı?</label>
+                <small class="info-text">
+                    💡 Dağıtım izni kullanıldıysa 3 gün şafağa eklenir (askerlik uzar).
+                    Kullanılmadıysa herhangi bir etki olmaz.
+                </small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="dagitim" value="0" checked>
+                        <span>Hayır, kullanılmadı</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="dagitim" value="3">
+                        <span>Evet, 3 gün kullanıldı → şafağa +3 gün eklenir 📌</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- MEHİL İZNİ - Sadece uzun dönemde gösterilecek -->
+            <div class="inp-group" id="mehilGroup">
+                <label>Mehil İzni Kullanıldı mı?</label>
+                <small class="info-text">
+                    💡 Mehil izni <b>askerlik günlerinden sayılır</b>, terhis tarihini etkilemez.
+                    Dağıtım ve yol izni bu izinin içindedir. Sadece uzun dönem için geçerlidir.
+                </small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="mehil" value="1" checked>
+                        <span>Evet, mehil izni kullandım (dağıtım ve yol dahil)</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="mehil" value="0">
+                        <span>Hayır, mehil izni kullanmadım</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="inp-group">
+                <label>Yol İzni (Kaç Gün):</label>
+                <small class="info-text">💡 Yol izni şafaktan düşülür ✂️</small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="yol" value="1" checked>
+                        <span>1 gün</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="yol" value="2">
+                        <span>2 gün</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="yol" value="3">
+                        <span>3 gün</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="inp-group">
+                <label>Şu ana kadar kaç gün izin kullandın?</label>
+                <small class="info-text">💡 Kullanmadığın izinler şafaktan düşülür. Henüz izin kullanmadıysan 0 gir.</small>
+                <input type="number" id="usedIzin" min="0" value="0" placeholder="0">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-back" id="cancelCreate">← Geri</button>
+                <button class="btn-go" id="createBtn">✓ PROFİL OLUŞTUR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANA EKRAN -->
+    <div id="mainScreen" class="screen">
+
+        <header>
+            <div class="header-info">
+                <h2 id="userNameHeader">🎖️ SAYAÇ</h2>
+                <small id="userDurationHeader"></small>
+            </div>
+            <div class="hdr-boxes">
+                <div class="days-box main-box">
+                    <span id="remDays">-</span>
+                    <small>TOPLAM KALAN</small>
+                </div>
+                <div class="days-box plate-box">
+                    <span id="plateDays">-</span>
+                    <small>İL SAYACI</small>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button class="btn-icon" id="switchBtn" title="Profil Değiştir">👥</button>
+                <button class="btn-icon danger" id="resetBtn" title="Bu Profili Sil">🗑️</button>
+            </div>
+        </header>
+
+        <div class="prog">
+            <div class="prog-bar">
+                <div class="prog-fill" id="progFill"></div>
+            </div>
+            <div class="prog-info">
+                <b id="compDays">0</b> / <b id="totalDaysLabel">-</b> gün tamam · <b id="pctDone">0</b>%
+            </div>
+        </div>
+
+        <!-- İZİN/CEZA BİLGİ KUTUSU -->
+        <div class="extras-wrapper">
+            <div class="extras-grid" id="extrasGrid">
+                <div class="extra-box positive" id="dagitimBox">
+                    <small>🎫 Dağıtım İzni</small>
+                    <span id="extraDagitim">-</span>
+                </div>
+                <div class="extra-box positive" id="yolBox">
+                    <small>🚗 Yol İzni</small>
+                    <span id="extraYol">-</span>
+                </div>
+                <div class="extra-box positive" id="mehilBox" style="display:none;">
+                    <small>🏠 Mehil İzni</small>
+                    <span id="extraMehil">-</span>
+                </div>
+                <div class="extra-box positive">
+                    <small>🌴 İzin (Kullanılmayan)</small>
+                    <span id="extraIzin">-</span>
+                    <button class="btn-mini" id="editIzinBtn" title="İzin güncelle">✎</button>
+                </div>
+                <div class="extra-box negative ceza-box" id="cezaBoxWrapper">
+                    <small>⚠️ Ceza</small>
+                    <span id="extraCeza">0 gün</span>
+                    <button class="btn-mini" id="addCezaBtn" title="Ceza ekle">+</button>
+                </div>
+            </div>
+            <div class="extras-summary" id="extrasSummary"></div>
+        </div>
+
+        <div class="phase-bar">
+            <div class="phase-seg waiting" id="phase1">
+                <span class="phase-label" id="phase1Label">📅 Bekleme</span>
+            </div>
+            <div class="phase-seg counting" id="phase2">
+                <span class="phase-label">🗺️ İl Sayacı (81→1)</span>
+            </div>
+        </div>
+
+        <div class="today" id="todayCard">
+            <div class="today-hdr"><span>BUGÜNÜN DURUMU</span></div>
+            <div class="today-body"></div>
+        </div>
+
+        <div class="dates">
+            <div class="dbox"><small>Başlangıç</small><span id="dStart">-</span></div>
+            <div class="dbox"><small>Bugün</small><span id="dToday">-</span></div>
+            <div class="dbox amber-hl"><small>İl Sayacı Başlangıcı</small><span id="dPlateStart">-</span></div>
+            <div class="dbox hl"><small>Terhis 🏠</small><span id="dEnd">-</span></div>
+        </div>
+
+        <div class="map-section">
+            <div class="map-title">
+                <h3>🗺️ TÜRKİYE HARİTASI</h3>
+                <div class="legend">
+                    <span><i class="lc"></i>Tamamlanan</span>
+                    <span><i class="lt"></i>Bugün</span>
+                    <span><i class="lr"></i>Kalan</span>
+                </div>
+            </div>
+            <div class="map-wrap" id="mapWrap">
+                <div class="map-loading">🗺️ Harita yükleniyor...</div>
+            </div>
+        </div>
+
+        <h3 class="hist-title">⭐ FAVORİ İLLERİM <span id="favCount" class="fav-count">0</span></h3>
+        <div class="fav-list" id="favList"></div>
+
+        <h3 class="hist-title">📋 İL SAYACI GEÇMİŞİ</h3>
+        <div class="hist-list" id="histList"></div>
+
+        <!-- CEZA GEÇMİŞİ -->
+        <h3 class="hist-title">⚠️ CEZA GEÇMİŞİ</h3>
+        <div class="ceza-list" id="cezaList"></div>
+
+        <footer>⭐ Vatan sana canım feda ⭐</footer>
+    </div>
+
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+    <div class="tp" id="ttPlate"></div>
+    <div class="tn" id="ttName"></div>
+    <div class="tq" id="ttQuote"></div>
+    <div class="ts" id="ttStatus"></div>
+</div>
+
+<!-- İL MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <span class="mx" id="mClose">&times;</span>
+        <button class="fav-btn" id="favBtn" title="Favorilere ekle">
+            <span id="favIcon">☆</span>
+        </button>
+        <div class="mp" id="mPlate"></div>
+        <h2 id="mName"></h2>
+        <p class="mq" id="mQuote"></p>
+        <div class="md" id="mDay"></div>
+        <div class="ms" id="mStatus"></div>
+    </div>
+</div>
+
+<!-- CEZA EKLEME MODAL -->
+<div class="modal" id="cezaModal">
+    <div class="modal-box">
+        <span class="mx" id="cezaClose">&times;</span>
+        <div style="font-size:3rem;margin-bottom:10px">⚠️</div>
+        <h2>CEZA EKLE</h2>
+        <p class="mq">Ceza en az 6 gündür.<br>Ceza günleri şafağa eklenir ve terhisi geciktirir.</p>
+
+        <div class="inp-group" style="text-align:left;margin-top:20px">
+            <label>Ceza Gün Sayısı:</label>
+            <input type="number" id="cezaGun" min="6" value="6" placeholder="6">
+        </div>
+
+        <div class="inp-group" style="text-align:left">
+            <label>Ceza Sebebi (opsiyonel):</label>
+            <input type="text" id="cezaSebep" placeholder="Örn: Nöbet kaçırma" maxlength="50">
+        </div>
+
+        <div class="btn-row" style="margin-top:20px">
+            <button class="btn-back" id="cancelCeza">İptal</button>
+            <button class="btn-go" id="saveCezaBtn">CEZA EKLE</button>
+        </div>
+    </div>
+</div>
+
+<!-- İZİN GÜNCELLEME MODAL -->
+<div class="modal" id="izinModal">
+    <div class="modal-box">
+        <span class="mx" id="izinClose">&times;</span>
+        <div style="font-size:3rem;margin-bottom:10px">🌴</div>
+        <h2>İZİN GÜNCELLEME</h2>
+        <p class="mq" id="izinInfoLabel"></p>
+
+        <div class="inp-group" style="text-align:left;margin-top:20px">
+            <label>Şu ana kadar kullandığın izin (gün):</label>
+            <input type="number" id="editUsedIzin" min="0" value="0">
+        </div>
+
+        <div class="izin-preview" id="izinPreview"></div>
+
+        <div class="btn-row" style="margin-top:20px">
+            <button class="btn-back" id="cancelIzin">İptal</button>
+            <button class="btn-go" id="saveIzinBtn">✓ GÜNCELLE</button>
+        </div>
+    </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

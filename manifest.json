@@ -1,0 +1,18 @@
+{
+  "name": "Asker Şafak Haritası",
+  "short_name": "Şafak",
+  "description": "Askerlik geri sayım ve il sayacı uygulaması",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#14532d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
