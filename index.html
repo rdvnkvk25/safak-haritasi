@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asker Şafak Haritası</title>
+
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14532d">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Şafak Haritası">
     <link rel="apple-touch-icon" href="icon.svg">
+
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -37,39 +40,46 @@
             <h1>YENİ PROFİL</h1>
             <p class="sub">Askerlik bilgilerini gir</p>
 
+            <!-- AD SOYAD -->
             <div class="inp-group">
                 <label>Ad Soyad:</label>
                 <input type="text" id="fullName" placeholder="Örn: Ahmet Yılmaz" maxlength="30">
             </div>
 
+            <!-- BAŞLANGIÇ TARİHİ -->
             <div class="inp-group">
-                <label>Askere Başlangıç Tarihi:</label>
+                <label>Sevk (Celp) Tarihi:</label>
+                <small class="info-text">
+                    📖 Askerlik başlangıç tarihiniz. Celp belgenizdeki sevk tarihini girin.
+                </small>
                 <input type="date" id="startDate">
             </div>
 
+            <!-- ASKERLİK SÜRESİ -->
             <div class="inp-group">
                 <label>Askerlik Süresi:</label>
                 <div class="radio-group">
                     <label class="radio-opt">
-                        <input type="radio" name="duration" value="180">
-                        <span>Kısa Dönem (6 ay / 180 gün)</span>
+                        <input type="radio" name="duration" value="6">
+                        <span>Kısa Dönem (6 ay / takvime göre ~181-184 gün)</span>
                     </label>
                     <label class="radio-opt">
-                        <input type="radio" name="duration" value="365" checked>
-                        <span>Uzun Dönem (12 ay / 365 gün)</span>
+                        <input type="radio" name="duration" value="12" checked>
+                        <span>Uzun Dönem (12 ay / takvime göre ~365-366 gün)</span>
                     </label>
                 </div>
                 <small class="info-text" id="izinInfoText">
-                    💡 İzin hakkı: İlk 6 ay için ayda 1 gün (6 gün), sonraki 6 ay için ayda 2 gün (12 gün) = <b>Toplam 18 gün</b>
+                    💡 Yıllık izin hakkı otomatik hesaplanır.
                 </small>
             </div>
 
-            <!-- DAĞITIM İZNİ - Sadece kısa dönemde gösterilecek -->
-            <div class="inp-group" id="dagitimGroup" style="display:none;">
-                <label>Acemilik Sonrası 3 Günlük Dağıtım İzni Kullanıldı mı?</label>
+            <!-- DAĞITIM İZNİ -->
+            <div class="inp-group" id="dagitimGroup">
+                <label>Dağıtım İzni (Evci İzni) Kullanıldı mı?</label>
                 <small class="info-text">
-                    💡 Dağıtım izni kullanıldıysa 3 gün şafağa eklenir (askerlik uzar).
-                    Kullanılmadıysa herhangi bir etki olmaz.
+                    📖 <b>Madde 27:</b> Dağıtım izni yıllık izin hakkından düşülür.
+                    Acemilik sonrası usta birliğe sevk öncesi kullanılır.
+                    Kullanıldıysa yıllık izin hakkınız o kadar azalır.
                 </small>
                 <div class="radio-group">
                     <label class="radio-opt">
@@ -77,18 +87,23 @@
                         <span>Hayır, kullanılmadı</span>
                     </label>
                     <label class="radio-opt">
+                        <input type="radio" name="dagitim" value="2">
+                        <span>Evet, 2 gün kullanıldı</span>
+                    </label>
+                    <label class="radio-opt">
                         <input type="radio" name="dagitim" value="3">
-                        <span>Evet, 3 gün kullanıldı → şafağa +3 gün eklenir 📌</span>
+                        <span>Evet, 3 gün kullanıldı (2 gün izin + 1 gün yol)</span>
                     </label>
                 </div>
             </div>
 
-            <!-- MEHİL İZNİ - Sadece uzun dönemde gösterilecek -->
+            <!-- MEHİL İZNİ - Sadece uzun dönemde -->
             <div class="inp-group" id="mehilGroup">
                 <label>Mehil İzni Kullanıldı mı?</label>
                 <small class="info-text">
-                    💡 Mehil izni <b>askerlik günlerinden sayılır</b>, terhis tarihini etkilemez.
-                    Dağıtım ve yol izni bu izinin içindedir. Sadece uzun dönem için geçerlidir.
+                    📖 <b>Madde 27:</b> Mehil izni askerlik günlerinden sayılır,
+                    terhis tarihini etkilemez. Dağıtım ve yol izni bu iznin içindedir.
+                    Sadece uzun dönem için geçerlidir.
                 </small>
                 <div class="radio-group">
                     <label class="radio-opt">
@@ -102,29 +117,119 @@
                 </div>
             </div>
 
-            <div class="inp-group">
-                <label>Yol İzni (Kaç Gün):</label>
-                <small class="info-text">💡 Yol izni şafaktan düşülür ✂️</small>
+            
+                        <!-- ACEMİLİK YOL İZNİ -->
+            <div class="inp-group" id="yolAcemilikGroup">
+                <label>Acemilik Yol İzni (Sevke Gidiş):</label>
+                <small class="info-text">
+                    📖 Sevk tarihinden sonra acemilik birliğine katılmanız için verilen yol süresi.
+                    Evinizden acemilik birliğine olan mesafeye göre belirlenir.<br>
+                    • 0-800 km: <b>1 gün</b> · 801+ km: <b>2 gün</b><br>
+                    Bu süre geç katılış hesabında kullanılır.
+                </small>
                 <div class="radio-group">
                     <label class="radio-opt">
-                        <input type="radio" name="yol" value="1" checked>
-                        <span>1 gün</span>
+                        <input type="radio" name="yolAcemilik" value="1" checked>
+                        <span>1 gün (0-800 km)</span>
                     </label>
                     <label class="radio-opt">
-                        <input type="radio" name="yol" value="2">
-                        <span>2 gün</span>
+                        <input type="radio" name="yolAcemilik" value="2">
+                        <span>2 gün (801+ km)</span>
                     </label>
                     <label class="radio-opt">
-                        <input type="radio" name="yol" value="3">
-                        <span>3 gün</span>
+                        <input type="radio" name="yolAcemilik" value="3">
+                        <span>3 gün (çok uzak / aktarmalı)</span>
                     </label>
                 </div>
             </div>
 
+            <!-- TERHİS YOL İZNİ -->
+            <div class="inp-group" id="yolTerhisGroup">
+                <label>Terhis Yol İzni (Eve Dönüş):</label>
+                <small class="info-text">
+                    📖 Usta birliğinden eve dönüş için verilen yol süresi.
+                    Usta birliğinizden evinize olan mesafeye göre belirlenir.<br>
+                    • 0-800 km: <b>1 gün</b> · 801+ km: <b>2 gün</b><br>
+                    Bu süre şafaktan düşülür ✂️
+                </small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="yolTerhis" value="1" checked>
+                        <span>1 gün (0-800 km)</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="yolTerhis" value="2">
+                        <span>2 gün (801+ km)</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="yolTerhis" value="3">
+                        <span>3 gün (çok uzak / aktarmalı)</span>
+                    </label>
+                </div>
+            </div>
+                        <!-- GEÇ KATILIŞ -->
+            <div class="inp-group" id="katilisGroup">
+                <label>Birliğe Katılış Tarihi (Opsiyonel):</label>
+                <small class="info-text">
+                    📖 Sevk tarihinden sonra yol izni süreniz içinde birliğe katılmanız gerekir.
+                    Bu süreden sonra katıldıysanız, aradaki fark askerliğinize eklenir.
+                    <b>Zamanında katıldıysanız boş bırakın.</b>
+                </small>
+                <input type="date" id="katilisDate">
+                <div id="gecKatilisInfo" class="gec-info" style="display:none"></div>
+            </div>
+            <!-- KULLANILAN İZİN -->
             <div class="inp-group">
-                <label>Şu ana kadar kaç gün izin kullandın?</label>
-                <small class="info-text">💡 Kullanmadığın izinler şafaktan düşülür. Henüz izin kullanmadıysan 0 gir.</small>
+                <label>Şu ana kadar kullanılan normal izin (gün):</label>
+                <small class="info-text">
+                    📖 <b>Madde 27:</b> Her ay için 1 gün izin hakkı verilir.
+                    Kullanılmayan izinler terhisi öne çeker (şafaktan düşülür).
+                    Dağıtım izni zaten yıllık izinden düşülmüştür, burada sadece normal izinleri girin.
+                </small>
                 <input type="number" id="usedIzin" min="0" value="0" placeholder="0">
+            </div>
+
+            <!-- MAZERET İZNİ -->
+            <div class="inp-group">
+                <label>Mazeret İzni Kullanıldı mı? (Opsiyonel)</label>
+                <small class="info-text">
+                    📖 <b>Madde 27:</b> Birinci derece yakının vefatında <b>10 güne kadar</b>,
+                    doğal afetlerde <b>30 güne kadar</b> mazeret izni verilebilir.
+                    Hizmetten sayılır, terhisi etkilemez. Yoksa 0 bırakın.
+                </small>
+                <input type="number" id="mazeretIzin" min="0" value="0" placeholder="0">
+            </div>
+
+            <!-- SAĞLIK İZNİ -->
+            <div class="inp-group">
+                <label>Sağlık Raporu / Hava Değişimi (Opsiyonel)</label>
+                <small class="info-text">
+                    📖 <b>Madde 27:</b> Sağlık raporu ile verilen istirahat süreleri
+                    belirli süreye kadar hizmetten sayılır. Uzun süreli raporlarda
+                    aşan kısım askerliğe eklenir. Yoksa 0 bırakın.
+                </small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="saglikDurum" value="yok" checked>
+                        <span>Sağlık raporu yok</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="saglikDurum" value="var">
+                        <span>Sağlık raporu var</span>
+                    </label>
+                </div>
+                <div id="saglikDetay" style="display:none; margin-top:10px;">
+                    <label style="font-size:0.8rem; color:#aaa;">Toplam rapor süresi (gün):</label>
+                    <input type="number" id="saglikGun" min="0" value="0" placeholder="0">
+                    <label style="font-size:0.8rem; color:#aaa; margin-top:8px; display:block;">
+                        Hizmetten sayılan kısmı (gün):
+                    </label>
+                    <input type="number" id="saglikSayilan" min="0" value="0" placeholder="0">
+                    <small class="info-text" style="margin-top:6px;">
+                        💡 Toplam rapor süresi ile hizmetten sayılan kısmın farkı askerliğe eklenir.
+                        Örn: 40 gün rapor, 30 gün hizmetten sayılır → 10 gün askerliğe eklenir.
+                    </small>
+                </div>
             </div>
 
             <div class="btn-row">
@@ -143,9 +248,13 @@
                 <small id="userDurationHeader"></small>
             </div>
             <div class="hdr-boxes">
+                <div class="days-box atarsa-box">
+                    <span id="atarsaDays">-</span>
+                    <small>ATARSA</small>
+                </div>
                 <div class="days-box main-box">
                     <span id="remDays">-</span>
-                    <small>TOPLAM KALAN</small>
+                    <small>KALAN</small>
                 </div>
                 <div class="days-box plate-box">
                     <span id="plateDays">-</span>
@@ -167,25 +276,49 @@
             </div>
         </div>
 
-        <!-- İZİN/CEZA BİLGİ KUTUSU -->
+        <!-- İZİN/CEZA BİLGİ KUTULARI -->
         <div class="extras-wrapper">
             <div class="extras-grid" id="extrasGrid">
+                <div class="extra-box positive" id="izinHakkiBox">
+                    <small>📋 İzin Hakkı</small>
+                    <span id="extraIzinHakki">-</span>
+                </div>
                 <div class="extra-box positive" id="dagitimBox">
-                    <small>🎫 Dağıtım İzni</small>
+                    <small>🎫 Dağıtım</small>
                     <span id="extraDagitim">-</span>
                 </div>
-                <div class="extra-box positive" id="yolBox">
-                    <small>🚗 Yol İzni</small>
-                    <span id="extraYol">-</span>
+                <div class="extra-box positive" id="normalIzinBox">
+                    <small>🌴 Normal İzin</small>
+                    <span id="extraNormalIzin">-</span>
+                    <button class="btn-mini" id="editIzinBtn" title="İzin güncelle">✎</button>
+                </div>
+                <div class="extra-box positive" id="unusedIzinBox">
+                    <small>✂️ Kullanılmayan</small>
+                    <span id="extraUnusedIzin">-</span>
+                </div>
+                <div class="extra-box positive" id="yolAcemilikBox">
+                    <small>🚗 Acemilik Yol</small>
+                    <span id="extraYolAcemilik">-</span>
+                </div>
+                <div class="extra-box positive" id="yolTerhisBox">
+                    <small>🏠 Terhis Yol</small>
+                    <span id="extraYolTerhis">-</span>
                 </div>
                 <div class="extra-box positive" id="mehilBox" style="display:none;">
                     <small>🏠 Mehil İzni</small>
                     <span id="extraMehil">-</span>
                 </div>
-                <div class="extra-box positive">
-                    <small>🌴 İzin (Kullanılmayan)</small>
-                    <span id="extraIzin">-</span>
-                    <button class="btn-mini" id="editIzinBtn" title="İzin güncelle">✎</button>
+                <div class="extra-box info-box" id="mazeretBox" style="display:none;">
+                    <small>🏥 Mazeret İzni</small>
+                    <span id="extraMazeret">-</span>
+                </div>
+                <div class="extra-box info-box" id="saglikBox" style="display:none;">
+                    <small>🩺 Sağlık Raporu</small>
+                    <span id="extraSaglik">-</span>
+                </div>
+                <div class="extra-box negative" id="gecBox" style="display:none;">
+                    <small>⏰ Geç Katılış</small>
+                    <span id="extraGec">-</span>
                 </div>
                 <div class="extra-box negative ceza-box" id="cezaBoxWrapper">
                     <small>⚠️ Ceza</small>
@@ -217,7 +350,7 @@
             <div class="dbox hl"><small>Terhis 🏠</small><span id="dEnd">-</span></div>
         </div>
 
-        <div class="map-section">
+        <div class="map-section" id="mapSection">
             <button class="map-fs-close" id="mapFsClose">✕</button>
             <div class="map-title">
                 <h3>🗺️ TÜRKİYE HARİTASI</h3>
@@ -239,9 +372,29 @@
         <h3 class="hist-title">📋 İL SAYACI GEÇMİŞİ</h3>
         <div class="hist-list" id="histList"></div>
 
-        <!-- CEZA GEÇMİŞİ -->
         <h3 class="hist-title">⚠️ CEZA GEÇMİŞİ</h3>
         <div class="ceza-list" id="cezaList"></div>
+
+        <!-- KANUN BİLGİ BÖLÜMÜ -->
+        <div class="kanun-section">
+            <h3 class="hist-title">📖 YASAL DAYANAK</h3>
+            <div class="kanun-box">
+                <p><b>7179 Sayılı Askeralma Kanunu - Madde 27 (İzinler)</b></p>
+                <ul>
+                    <li>Erbaş ve erler, hizmet sürelerinin <b>her ayı için 1 gün</b> izin hakkına sahiptir.</li>
+                    <li>Dağıtım (evci) izni <b>yıllık izinden düşülür</b>.</li>
+                    <li>Kullanılmayan izinler <b>terhis tarihini öne çeker</b>.</li>
+                    <li>Yol izni mesafeye göre verilir: 0-800 km → 1 gün, 801+ km → 2 gün.</li>
+                    <li>Mazeret izni (vefat: 10 gün, afet: 30 gün) hizmetten sayılır.</li>
+                    <li>Sağlık raporu belirli süreye kadar hizmetten sayılır.</li>
+                    <li>Disiplin cezaları terhis tarihini <b>geciktirir</b>.</li>
+                </ul>
+                <p class="kanun-ref">
+                    📄 Kaynak: <a href="https://www.mevzuat.gov.tr/MevzuatMetin/1.5.7179.pdf" target="_blank">7179 Sayılı Kanun</a> ·
+                    <a href="https://static.turkiye.gov.tr/downloads/kurumlar/msb/ERBAS_VE_ERLERIN_YASAL_HAKLARI.pdf" target="_blank">MSB Yasal Haklar</a>
+                </p>
+            </div>
+        </div>
 
         <footer>⭐ Vatan sana canım feda ⭐</footer>
     </div>
@@ -277,11 +430,30 @@
         <span class="mx" id="cezaClose">&times;</span>
         <div style="font-size:3rem;margin-bottom:10px">⚠️</div>
         <h2>CEZA EKLE</h2>
-        <p class="mq">Ceza en az 6 gündür.<br>Ceza günleri şafağa eklenir ve terhisi geciktirir.</p>
+        <p class="mq">Disiplin cezaları terhis tarihini geciktirir.<br>
+        📖 Ceza günleri askerlik süresine eklenir.</p>
 
         <div class="inp-group" style="text-align:left;margin-top:20px">
             <label>Ceza Gün Sayısı:</label>
-            <input type="number" id="cezaGun" min="6" value="6" placeholder="6">
+            <input type="number" id="cezaGun" min="1" value="1" placeholder="1">
+        </div>
+
+        <div class="inp-group" style="text-align:left">
+            <label>Ceza Türü:</label>
+            <div class="radio-group">
+                <label class="radio-opt">
+                    <input type="radio" name="cezaTur" value="oda" checked>
+                    <span>Oda hapsi</span>
+                </label>
+                <label class="radio-opt">
+                    <input type="radio" name="cezaTur" value="gozetim">
+                    <span>Gözetim altında oda hapsi</span>
+                </label>
+                <label class="radio-opt">
+                    <input type="radio" name="cezaTur" value="diger">
+                    <span>Diğer</span>
+                </label>
+            </div>
         </div>
 
         <div class="inp-group" style="text-align:left">
@@ -305,7 +477,11 @@
         <p class="mq" id="izinInfoLabel"></p>
 
         <div class="inp-group" style="text-align:left;margin-top:20px">
-            <label>Şu ana kadar kullandığın izin (gün):</label>
+            <label>Kullanılan normal izin (gün):</label>
+            <small class="info-text">
+                💡 Dağıtım izni hariç, sadece normal izin günlerinizi girin.
+                Dağıtım izni zaten yıllık izinden düşülmüştür.
+            </small>
             <input type="number" id="editUsedIzin" min="0" value="0">
         </div>
 
@@ -320,6 +496,21 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
+
+<!-- Service Worker Kaydı -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js')
+            .then(function (reg) {
+                console.log('🎖️ Service Worker kayıtlı:', reg.scope);
+            })
+            .catch(function (err) {
+                console.log('🎖️ SW kayıt hatası:', err);
+            });
+    });
+}
+</script>
 
 </body>
 </html>
