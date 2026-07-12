@@ -1743,3 +1743,9 @@ body.map-fullscreen .tooltip {
     border: 1px solid #7f1d1d;
     color: #fca5a5;
 }
+
+@media (hover: none), (pointer: coarse) {
+    .tooltip {
+        display: none !important;
+    }
+}
