@@ -1316,6 +1316,9 @@ function renderHistory(I) {
 }
 
 function openModal(city, plateNum, armyDay, info) {
+    if (document.body.classList.contains('map-fullscreen')) {
+        document.body.classList.remove('map-fullscreen');
+    }
     currentModalCity = { city: city, plate: plateNum };
 
     document.getElementById('mPlate').textContent = city.p;

@@ -1616,31 +1616,6 @@ body.map-fullscreen .tooltip {
     z-index: 991;
 }
 
-@media (orientation: portrait) {
-    body.map-fullscreen .map-section {
-        width: 100vh;
-        height: 100vw;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(90deg);
-    }
-
-    body.map-fullscreen .modal {
-        transform: rotate(90deg);
-        transform-origin: center center;
-    }
-
-    body.map-fullscreen .modal-box {
-        max-height: 90vw;
-        max-width: 90vh;
-    }
-
-    body.map-fullscreen .tooltip {
-        transform: rotate(90deg);
-        transform-origin: top left;
-    }
-}
-
 @media (orientation: landscape) {
     body.map-fullscreen .map-section {
         transform: none;
