@@ -1403,11 +1403,65 @@ function formatDate(d) {
 // ===== HARİTA TAM EKRAN =====
 function toggleMapFullscreen() {
     document.body.classList.toggle('map-fullscreen');
+    if (document.body.classList.contains('map-fullscreen')) {
+        applyFullscreenOrientation();
+        window.addEventListener('resize', applyFullscreenOrientation);
+        window.addEventListener('orientationchange', applyFullscreenOrientation);
+    } else {
+        removeFullscreenOrientation();
+        window.removeEventListener('resize', applyFullscreenOrientation);
+        window.removeEventListener('orientationchange', applyFullscreenOrientation);
+    }
 }
 
 function closeMapFullscreen() {
     hideFsInfo();
     document.body.classList.remove('map-fullscreen');
+    removeFullscreenOrientation();
+    window.removeEventListener('resize', applyFullscreenOrientation);
+    window.removeEventListener('orientationchange', applyFullscreenOrientation);
+}
+
+function applyFullscreenOrientation() {
+    var mapSection = document.getElementById('mapSection');
+    if (!mapSection) return;
+
+    var isPortrait = window.innerHeight > window.innerWidth;
+
+    if (isPortrait) {
+        // Dikey telefon → haritayı yatay göster
+        mapSection.style.position = 'fixed';
+        mapSection.style.width = window.innerHeight + 'px';
+        mapSection.style.height = window.innerWidth + 'px';
+        mapSection.style.top = '50%';
+        mapSection.style.left = '50%';
+        mapSection.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+        mapSection.style.zIndex = '990';
+        mapSection.style.background = '#0a0e1a';
+        mapSection.style.padding = '10px';
+        mapSection.style.margin = '0';
+        mapSection.style.borderRadius = '0';
+    } else {
+        // Yatay telefon → normal göster
+        mapSection.style.position = 'fixed';
+        mapSection.style.width = '100vw';
+        mapSection.style.height = '100vh';
+        mapSection.style.top = '0';
+        mapSection.style.left = '0';
+        mapSection.style.transform = 'none';
+        mapSection.style.zIndex = '990';
+        mapSection.style.background = '#0a0e1a';
+        mapSection.style.padding = '10px';
+        mapSection.style.margin = '0';
+        mapSection.style.borderRadius = '0';
+    }
+}
+
+function removeFullscreenOrientation() {
+    var mapSection = document.getElementById('mapSection');
+    if (!mapSection) return;
+    // Tüm inline stilleri kaldır
+    mapSection.style.cssText = '';
 }
 
 document.getElementById('mapFsBtn').addEventListener('click', function (e) {
