@@ -1476,6 +1476,12 @@ document.getElementById('mapFsClose').addEventListener('click', function (e) {
 
 document.getElementById('mapWrap').addEventListener('click', function (e) {
     if (e.target.tagName !== 'path' && e.target.tagName !== 'text' && e.target.tagName !== 'svg') {
+        // Bilgi kartı açıksa önce onu kapat
+        var fsInfo = document.getElementById('mapFsInfo');
+        if (fsInfo && fsInfo.classList.contains('active')) {
+            hideFsInfo();
+            return;
+        }
         toggleMapFullscreen();
     }
 });
@@ -1710,7 +1716,21 @@ document.getElementById('importModal').addEventListener('click', function (e) {
     if (e.target.id === 'importModal') closeImportModal();
 });
 document.getElementById('importProfileBtn').addEventListener('click', importProfile2);
-document.getElementById('fsiClose').addEventListener('click', function (e) {
-    e.stopPropagation();
-    hideFsInfo();
-});
+
+// Bilgi kartı - ✕ butonu veya kartın herhangi bir yerine basınca kapat
+var fsiCloseBtn = document.getElementById('fsiClose');
+var mapFsInfoEl = document.getElementById('mapFsInfo');
+
+if (fsiCloseBtn) {
+    fsiCloseBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        hideFsInfo();
+    });
+}
+
+if (mapFsInfoEl) {
+    mapFsInfoEl.addEventListener('click', function (e) {
+        e.stopPropagation();
+        hideFsInfo();
+    });
+}
