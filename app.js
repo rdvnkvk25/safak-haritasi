@@ -1317,8 +1317,10 @@ function renderHistory(I) {
 
 function openModal(city, plateNum, armyDay, info) {
     if (document.body.classList.contains('map-fullscreen')) {
-        document.body.classList.remove('map-fullscreen');
+        showFsInfo(city, plateNum, armyDay, info);
+        return;
     }
+
     currentModalCity = { city: city, plate: plateNum };
 
     document.getElementById('mPlate').textContent = city.p;
@@ -1358,7 +1360,37 @@ function openModal(city, plateNum, armyDay, info) {
     updateFavButton(plateNum);
     document.getElementById('modal').classList.add('active');
 }
+function showFsInfo(city, plateNum, armyDay, info) {
+    var fsInfo = document.getElementById('mapFsInfo');
 
+    document.getElementById('fsiPlate').textContent = city.p;
+    document.getElementById('fsiName').textContent = city.n;
+    document.getElementById('fsiQuote').textContent = '"' + city.q + '"';
+
+    var d = new Date(info.startDate);
+    d.setDate(d.getDate() + (armyDay - 1));
+    document.getElementById('fsiDay').textContent = armyDay + '. Gün · ' + formatDate(d);
+
+    var statusEl = document.getElementById('fsiStatus');
+    fsInfo.classList.remove('status-completed', 'status-current', 'status-waiting');
+
+    if (info.finished || plateNum > info.currentPlate) {
+        statusEl.textContent = '✅ Tamamlandı';
+        fsInfo.classList.add('status-completed');
+    } else if (plateNum === info.currentPlate) {
+        statusEl.textContent = '📍 Bugün';
+        fsInfo.classList.add('status-current');
+    } else {
+        statusEl.textContent = '⏳ Bekliyor';
+        fsInfo.classList.add('status-waiting');
+    }
+
+    fsInfo.classList.add('active');
+}
+
+function hideFsInfo() {
+    document.getElementById('mapFsInfo').classList.remove('active');
+}
 function closeModal() {
     document.getElementById('modal').classList.remove('active');
 }
@@ -1374,6 +1406,7 @@ function toggleMapFullscreen() {
 }
 
 function closeMapFullscreen() {
+    hideFsInfo();
     document.body.classList.remove('map-fullscreen');
 }
 
@@ -1623,3 +1656,7 @@ document.getElementById('importModal').addEventListener('click', function (e) {
     if (e.target.id === 'importModal') closeImportModal();
 });
 document.getElementById('importProfileBtn').addEventListener('click', importProfile2);
+document.getElementById('fsiClose').addEventListener('click', function (e) {
+    e.stopPropagation();
+    hideFsInfo();
+});
