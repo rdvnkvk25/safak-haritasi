@@ -30,6 +30,11 @@
             <div id="profileList" class="profile-list"></div>
 
             <button class="btn-go" id="newProfileBtn">➕ YENİ PROFİL OLUŞTUR</button>
+
+            <div class="btn-row" style="margin-top:10px">
+                <button class="btn-transfer" id="exportBtn">📤 Dışa Aktar</button>
+                <button class="btn-transfer" id="importBtn">📥 İçe Aktar</button>
+            </div>
         </div>
     </div>
 
@@ -46,7 +51,7 @@
                 <input type="text" id="fullName" placeholder="Örn: Ahmet Yılmaz" maxlength="30">
             </div>
 
-            <!-- BAŞLANGIÇ TARİHİ -->
+            <!-- SEVK TARİHİ -->
             <div class="inp-group">
                 <label>Sevk (Celp) Tarihi:</label>
                 <small class="info-text">
@@ -79,7 +84,6 @@
                 <small class="info-text">
                     📖 <b>Madde 27:</b> Dağıtım izni yıllık izin hakkından düşülür.
                     Acemilik sonrası usta birliğe sevk öncesi kullanılır.
-                    Kullanıldıysa yıllık izin hakkınız o kadar azalır.
                 </small>
                 <div class="radio-group">
                     <label class="radio-opt">
@@ -97,13 +101,12 @@
                 </div>
             </div>
 
-            <!-- MEHİL İZNİ - Sadece uzun dönemde -->
+            <!-- MEHİL İZNİ -->
             <div class="inp-group" id="mehilGroup">
                 <label>Mehil İzni Kullanıldı mı?</label>
                 <small class="info-text">
                     📖 <b>Madde 27:</b> Mehil izni askerlik günlerinden sayılır,
-                    terhis tarihini etkilemez. Dağıtım ve yol izni bu iznin içindedir.
-                    Sadece uzun dönem için geçerlidir.
+                    terhis tarihini etkilemez. Sadece uzun dönem için geçerlidir.
                 </small>
                 <div class="radio-group">
                     <label class="radio-opt">
@@ -117,13 +120,11 @@
                 </div>
             </div>
 
-            
-                        <!-- ACEMİLİK YOL İZNİ -->
+            <!-- ACEMİLİK YOL İZNİ -->
             <div class="inp-group" id="yolAcemilikGroup">
                 <label>Acemilik Yol İzni (Sevke Gidiş):</label>
                 <small class="info-text">
-                    📖 Sevk tarihinden sonra acemilik birliğine katılmanız için verilen yol süresi.
-                    Evinizden acemilik birliğine olan mesafeye göre belirlenir.<br>
+                    📖 Sevk tarihinden sonra acemilik birliğine katılmanız için verilen yol süresi.<br>
                     • 0-800 km: <b>1 gün</b> · 801+ km: <b>2 gün</b><br>
                     Bu süre geç katılış hesabında kullanılır.
                 </small>
@@ -147,8 +148,7 @@
             <div class="inp-group" id="yolTerhisGroup">
                 <label>Terhis Yol İzni (Eve Dönüş):</label>
                 <small class="info-text">
-                    📖 Usta birliğinden eve dönüş için verilen yol süresi.
-                    Usta birliğinizden evinize olan mesafeye göre belirlenir.<br>
+                    📖 Usta birliğinden eve dönüş için verilen yol süresi.<br>
                     • 0-800 km: <b>1 gün</b> · 801+ km: <b>2 gün</b><br>
                     Bu süre şafaktan düşülür ✂️
                 </small>
@@ -167,7 +167,8 @@
                     </label>
                 </div>
             </div>
-                        <!-- GEÇ KATILIŞ -->
+
+            <!-- GEÇ KATILIŞ -->
             <div class="inp-group" id="katilisGroup">
                 <label>Birliğe Katılış Tarihi (Opsiyonel):</label>
                 <small class="info-text">
@@ -178,12 +179,13 @@
                 <input type="date" id="katilisDate">
                 <div id="gecKatilisInfo" class="gec-info" style="display:none"></div>
             </div>
+
             <!-- KULLANILAN İZİN -->
             <div class="inp-group">
                 <label>Şu ana kadar kullanılan normal izin (gün):</label>
                 <small class="info-text">
                     📖 <b>Madde 27:</b> Her ay için 1 gün izin hakkı verilir.
-                    Kullanılmayan izinler terhisi öne çeker (şafaktan düşülür).
+                    Kullanılmayan izinler terhisi öne çeker.
                     Dağıtım izni zaten yıllık izinden düşülmüştür, burada sadece normal izinleri girin.
                 </small>
                 <input type="number" id="usedIzin" min="0" value="0" placeholder="0">
@@ -204,9 +206,9 @@
             <div class="inp-group">
                 <label>Sağlık Raporu / Hava Değişimi (Opsiyonel)</label>
                 <small class="info-text">
-                    📖 <b>Madde 27:</b> Sağlık raporu ile verilen istirahat süreleri
+                    📖 Sağlık raporu ile verilen istirahat süreleri
                     belirli süreye kadar hizmetten sayılır. Uzun süreli raporlarda
-                    aşan kısım askerliğe eklenir. Yoksa 0 bırakın.
+                    aşan kısım askerliğe eklenir.
                 </small>
                 <div class="radio-group">
                     <label class="radio-opt">
@@ -227,7 +229,6 @@
                     <input type="number" id="saglikSayilan" min="0" value="0" placeholder="0">
                     <small class="info-text" style="margin-top:6px;">
                         💡 Toplam rapor süresi ile hizmetten sayılan kısmın farkı askerliğe eklenir.
-                        Örn: 40 gün rapor, 30 gün hizmetten sayılır → 10 gün askerliğe eklenir.
                     </small>
                 </div>
             </div>
@@ -352,14 +353,6 @@
 
         <div class="map-section" id="mapSection">
             <button class="map-fs-close" id="mapFsClose">✕</button>
-            <div class="map-fs-info" id="mapFsInfo">
-                <button class="fsi-close" id="fsiClose">✕</button>
-                <div class="fsi-plate" id="fsiPlate"></div>
-                <div class="fsi-name" id="fsiName"></div>
-                <div class="fsi-quote" id="fsiQuote"></div>
-                <div class="fsi-status" id="fsiStatus"></div>
-                <div class="fsi-day" id="fsiDay"></div>
-            </div>
             <div class="map-title">
                 <h3>🗺️ TÜRKİYE HARİTASI</h3>
                 <button class="map-fs-btn" id="mapFsBtn" title="Tam ekran">⛶</button>
@@ -415,6 +408,16 @@
     <div class="tn" id="ttName"></div>
     <div class="tq" id="ttQuote"></div>
     <div class="ts" id="ttStatus"></div>
+</div>
+
+<!-- FULLSCREEN BİLGİ KARTI (Body seviyesinde) -->
+<div class="map-fs-info" id="mapFsInfo">
+    <button class="fsi-close" id="fsiClose">✕</button>
+    <div class="fsi-plate" id="fsiPlate"></div>
+    <div class="fsi-name" id="fsiName"></div>
+    <div class="fsi-quote" id="fsiQuote"></div>
+    <div class="fsi-status" id="fsiStatus"></div>
+    <div class="fsi-day" id="fsiDay"></div>
 </div>
 
 <!-- İL MODAL -->
@@ -498,6 +501,53 @@
         <div class="btn-row" style="margin-top:20px">
             <button class="btn-back" id="cancelIzin">İptal</button>
             <button class="btn-go" id="saveIzinBtn">✓ GÜNCELLE</button>
+        </div>
+    </div>
+</div>
+
+<!-- DIŞA AKTARMA MODAL -->
+<div class="modal" id="exportModal">
+    <div class="modal-box">
+        <span class="mx" id="exportClose">&times;</span>
+        <div style="font-size:3rem;margin-bottom:10px">📤</div>
+        <h2>PROFİL DIŞA AKTAR</h2>
+        <p class="mq">Kodu kopyalayıp diğer cihazda "İçe Aktar" bölümüne yapıştırın.</p>
+
+        <div class="inp-group" style="text-align:left;margin-top:15px">
+            <label>Aktarılacak Profil:</label>
+            <select id="exportSelect" class="transfer-select"></select>
+        </div>
+
+        <div class="inp-group" style="text-align:left;margin-top:10px">
+            <label>Aktarım Kodu:</label>
+            <textarea id="exportCode" class="transfer-code" readonly rows="5" placeholder="Profil seçin..."></textarea>
+        </div>
+
+        <div class="btn-row" style="margin-top:15px">
+            <button class="btn-back" id="cancelExport">Kapat</button>
+            <button class="btn-go" id="copyCodeBtn">📋 KOPYALA</button>
+        </div>
+    </div>
+</div>
+
+<!-- İÇE AKTARMA MODAL -->
+<div class="modal" id="importModal">
+    <div class="modal-box">
+        <span class="mx" id="importClose">&times;</span>
+        <div style="font-size:3rem;margin-bottom:10px">📥</div>
+        <h2>PROFİL İÇE AKTAR</h2>
+        <p class="mq">Diğer cihazdan aldığınız kodu yapıştırın.</p>
+
+        <div class="inp-group" style="text-align:left;margin-top:15px">
+            <label>Aktarım Kodu:</label>
+            <textarea id="importCode" class="transfer-code" rows="5" placeholder="Kodu buraya yapıştırın..."></textarea>
+        </div>
+
+        <div id="importPreview" class="import-preview" style="display:none"></div>
+
+        <div class="btn-row" style="margin-top:15px">
+            <button class="btn-back" id="cancelImport">İptal</button>
+            <button class="btn-go" id="importProfileBtn">📥 PROFİLİ AKTAR</button>
         </div>
     </div>
 </div>
