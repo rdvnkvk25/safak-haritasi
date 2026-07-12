@@ -1,6 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Arka plan -->
   <rect width="512" height="512" rx="80" fill="#14532d"/>
-  <text x="256" y="200" text-anchor="middle" font-size="160" fill="#4ade80" font-family="sans-serif" font-weight="bold">🎖️</text>
-  <text x="256" y="340" text-anchor="middle" font-size="72" fill="#4ade80" font-family="sans-serif" font-weight="bold">ŞAFAK</text>
-  <text x="256" y="420" text-anchor="middle" font-size="40" fill="#86efac" font-family="sans-serif">HARİTASI</text>
+
+  <!-- Yıldız (madalya benzeri) -->
+  <g transform="translate(256, 170)">
+    <polygon points="0,-80 20,-25 78,-25 32,10 50,65 0,32 -50,65 -32,10 -78,-25 -20,-25"
+             fill="#facc15" stroke="#713f12" stroke-width="4"/>
+  </g>
+
+  <!-- ŞAFAK yazısı -->
+  <text x="256" y="330" text-anchor="middle"
+        font-family="Arial Black, sans-serif"
+        font-size="80" font-weight="900"
+        fill="#4ade80"
+        stroke="#052e16" stroke-width="3">ŞAFAK</text>
+
+  <!-- HARİTASI yazısı -->
+  <text x="256" y="400" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="42" font-weight="700"
+        fill="#86efac">HARİTASI</text>
+
+  <!-- Alt çizgi -->
+  <rect x="156" y="425" width="200" height="4" rx="2" fill="#4ade80"/>
+
+  <!-- Alt yazı -->
+  <text x="256" y="465" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="28" font-weight="600"
+        fill="#facc15">81 İL</text>
 </svg>
