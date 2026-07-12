@@ -1243,7 +1243,8 @@ function attachMapEvents() {
                 tooltip.style.display = 'none';
             });
 
-            path.addEventListener('click', function () {
+            path.addEventListener('click', function (e) {
+                e.stopPropagation();
                 var pc = path.getAttribute('data-plate');
                 var city = findCity(parseInt(pc));
                 if (!city) return;
@@ -1318,6 +1319,11 @@ function openModal(city, plateNum, armyDay, info) {
     currentModalCity = { city: city, plate: plateNum };
 
     document.getElementById('mPlate').textContent = city.p;
+    if (plateNum === info.currentPlate && !info.finished) {
+        document.getElementById('mPlate').style.color = '#fbbf24';
+    } else {
+        document.getElementById('mPlate').style.color = '#4ade80';
+    }
     document.getElementById('mName').textContent = city.n;
     document.getElementById('mQuote').textContent = '"' + city.q + '"';
 
@@ -1335,6 +1341,15 @@ function openModal(city, plateNum, armyDay, info) {
     } else {
         s.textContent = '⏳ Bekliyor';
         s.className = 'ms wait';
+    }
+        // Modal border rengini duruma göre ayarla
+    var modalBox = document.querySelector('#modal .modal-box');
+    if (info.finished || plateNum > info.currentPlate) {
+        modalBox.style.borderColor = '#22c55e';
+    } else if (plateNum === info.currentPlate) {
+        modalBox.style.borderColor = '#f59e0b';
+    } else {
+        modalBox.style.borderColor = '#2d4a3e';
     }
 
     updateFavButton(plateNum);
@@ -1370,7 +1385,7 @@ document.getElementById('mapFsClose').addEventListener('click', function (e) {
 });
 
 document.getElementById('mapWrap').addEventListener('click', function (e) {
-    if (e.target.tagName !== 'path' && e.target.tagName !== 'text') {
+    if (e.target.tagName !== 'path' && e.target.tagName !== 'text' && e.target.tagName !== 'svg') {
         toggleMapFullscreen();
     }
 });
