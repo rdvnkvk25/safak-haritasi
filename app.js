@@ -1362,6 +1362,10 @@ function openModal(city, plateNum, armyDay, info) {
 }
 function showFsInfo(city, plateNum, armyDay, info) {
     var fsInfo = document.getElementById('mapFsInfo');
+    if (!fsInfo) return;
+
+    // Inline style'ı temizle
+    fsInfo.style.display = '';
 
     document.getElementById('fsiPlate').textContent = city.p;
     document.getElementById('fsiName').textContent = city.n;
@@ -1386,6 +1390,14 @@ function showFsInfo(city, plateNum, armyDay, info) {
     }
 
     fsInfo.classList.add('active');
+}
+
+function hideFsInfo() {
+    var fsInfo = document.getElementById('mapFsInfo');
+    if (fsInfo) {
+        fsInfo.classList.remove('active');
+        fsInfo.style.display = 'none';
+    }
 }
 
 function hideFsInfo() {
@@ -1734,3 +1746,14 @@ if (mapFsInfoEl) {
         hideFsInfo();
     });
 }
+// GLOBAL: Kart açıkken herhangi bir yere basınca kart kapansın
+document.addEventListener('click', function (e) {
+    var fsInfo = document.getElementById('mapFsInfo');
+    if (!fsInfo || !fsInfo.classList.contains('active')) return;
+
+    // Path tıklanırsa yeni ile geçiş için kapatma
+    if (e.target.tagName === 'path') return;
+
+    // Diğer her yere basınca kart kapansın
+    hideFsInfo();
+});
