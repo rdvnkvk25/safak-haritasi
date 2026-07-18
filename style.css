@@ -884,7 +884,7 @@ header h2 {
 /* ===== FAVORİ LİSTE ===== */
 .fav-count {
     display: inline-block;
-    background: linear-gradient(135deg, #eab308, #ca8a04);
+    background: linear-gradient(135deg, #7c3aed, #6b21a8);
     color: #fff;
     font-family: 'Poppins', sans-serif;
     font-size: 0.75rem;
@@ -903,8 +903,8 @@ header h2 {
 }
 
 .fav-item {
-    background: linear-gradient(145deg, #713f12, #92400e);
-    border: 2px solid #f59e0b;
+    background: linear-gradient(145deg, #4a1d96, #6b21a8);
+    border: 2px solid #8b5cf6;
     border-radius: 12px;
     padding: 14px;
     cursor: pointer;
@@ -924,11 +924,15 @@ header h2 {
     pointer-events: none;
 }
 
-.fav-item:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); border-color: #fbbf24; }
+.fav-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    border-color: #a78bfa;
+}
 
-.fav-item .fp { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; color: #fef3c7; line-height: 1; }
+.fav-item .fp { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; color: #ddd6fe; line-height: 1; }
 .fav-item .fn { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; color: #fff; letter-spacing: 2px; margin: 5px 0; }
-.fav-item .fq { font-size: 0.7rem; color: #fde68a; font-style: italic; line-height: 1.4; margin-top: 5px; }
+.fav-item .fq { font-size: 0.7rem; color: #c4b5fd; font-style: italic; line-height: 1.4; margin-top: 5px; }
 
 .fav-item .fx {
     position: absolute;
