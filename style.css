@@ -660,6 +660,31 @@ header h2 {
 
 .map-wrap svg path.current:hover { fill: #facc15; stroke: #fde047; stroke-width: 2; }
 
+/* ===== FAVORİ İLLER MOR RENK ===== */
+.map-wrap svg path.favorite {
+    fill: #7c3aed !important;
+    stroke: #c4b5fd !important;
+    stroke-width: 1.4 !important;
+    filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.65));
+}
+
+.map-wrap svg path.favorite:hover {
+    fill: #8b5cf6 !important;
+    stroke: #ddd6fe !important;
+    stroke-width: 2 !important;
+    filter: drop-shadow(0 0 16px rgba(139, 92, 246, 0.85));
+}
+
+/* Eğer bugünün ili favoriyse: mor + sarı vurgu */
+.map-wrap svg path.current.favorite {
+    fill: #8b5cf6 !important;
+    stroke: #facc15 !important;
+    stroke-width: 2.2 !important;
+    filter:
+        drop-shadow(0 0 10px rgba(139, 92, 246, 0.8))
+        drop-shadow(0 0 14px rgba(250, 204, 21, 0.6));
+}
+
 @keyframes mapPulse {
     0%, 100% { filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5)); }
     50% { filter: drop-shadow(0 0 22px rgba(250, 204, 21, 0.9)); }

@@ -552,7 +552,7 @@ function toggleFavorite() {
     if (!currentProfile.favorites) currentProfile.favorites = [];
     var idx = currentProfile.favorites.indexOf(plateNum);
     if (idx === -1) { currentProfile.favorites.push(plateNum); } else { currentProfile.favorites.splice(idx, 1); }
-    saveCurrentProfile(); updateFavButton(plateNum); renderFavorites(); updateMapFavorites();
+    saveCurrentProfile(); updateFavButton(plateNum); renderFavorites(); updateMapColors(getInfo()); updateMapFavorites();
 }
 function updateFavButton(plateNum) {
     var btn = document.getElementById('favBtn'), icon = document.getElementById('favIcon');
@@ -569,7 +569,8 @@ function renderFavorites() {
         var item = document.createElement('div'); item.className = 'fav-item';
         item.innerHTML = '<button class="fx">✕</button><div class="fp">' + city.p + '</div><div class="fn">' + city.n + '</div><div class="fq">"' + city.q + '"</div>';
         (function (c, p) { item.addEventListener('click', function (e) { if (e.target.classList.contains('fx')) return; var I = getInfo(); openModal(c, p, I.waitDays + (81 - p) + 1, I); }); })(city, plateNum);
-        (function (p) { item.querySelector('.fx').addEventListener('click', function (e) { e.stopPropagation(); var idx = currentProfile.favorites.indexOf(p); if (idx !== -1) { currentProfile.favorites.splice(idx, 1); saveCurrentProfile(); renderFavorites(); updateMapFavorites(); } }); })(plateNum);
+        (function (p) { item.querySelector('.fx').addEventListener('click', function (e) { e.stopPropagation(); var idx = currentProfile.favorites.indexOf(p); if (idx !== -1) { currentProfile.favorites.splice(idx, 1);
+        saveCurrentProfile(); renderFavorites(); updateMapColors(getInfo()); updateMapFavorites(); } }); })(plateNum);
         list.appendChild(item);
     });
 }
@@ -643,13 +644,33 @@ function attachMapEvents() {
     });
 }
 function updateMapColors(I) {
+    var favs = [];
+
+    if (currentProfile && currentProfile.favorites) {
+        favs = currentProfile.favorites.map(function (x) {
+            return parseInt(x);
+        });
+    }
+
     document.querySelectorAll('#mapSvg path').forEach(function (path) {
         var plate = parseInt(path.getAttribute('data-plate'));
-        path.classList.remove('completed', 'current', 'remaining');
-        if (!I.inPlatePhase && !I.finished) path.classList.add('remaining');
-        else if (I.finished || plate > I.currentPlate) path.classList.add('completed');
-        else if (plate === I.currentPlate) path.classList.add('current');
-        else path.classList.add('remaining');
+
+        path.classList.remove('completed', 'current', 'remaining', 'favorite');
+
+        if (!I.inPlatePhase && !I.finished) {
+            path.classList.add('remaining');
+        } else if (I.finished || plate > I.currentPlate) {
+            path.classList.add('completed');
+        } else if (plate === I.currentPlate) {
+            path.classList.add('current');
+        } else {
+            path.classList.add('remaining');
+        }
+
+        // Favori il ise mor boya
+        if (favs.indexOf(plate) !== -1) {
+            path.classList.add('favorite');
+        }
     });
 }
 function renderHistory(I) {
