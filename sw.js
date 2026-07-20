@@ -3,7 +3,7 @@
    Offline PWA Desteği
    ============================================= */
 
-var CACHE_NAME = 'safak-haritasi-v20';
+var CACHE_NAME = 'safak-haritasi-v21';
 
 // Temel dosyalar (install sırasında cache'lenir)
 var CORE_FILES = [
