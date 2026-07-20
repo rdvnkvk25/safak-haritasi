@@ -109,9 +109,11 @@ function calculateEndDate(startDateStr, months) {
 }
 
 // ===== İZİN HAKKI =====
-function getTotalIzinHakki(months) {
+function getTotalIzinHakki(months, tur) {
     if (months === 6) return 6;
-    return 18;
+    // Uzun dönem
+    if (tur === 'tk') return 28;      // Takım Komutanı
+    return 30;                         // Meslekçi (varsayılan)
 }
 
 function getMonths(profile) {
@@ -126,19 +128,28 @@ function toggleDurationGroups() {
     var checked = document.querySelector('input[name="duration"]:checked');
     if (!checked) return;
     var months = parseInt(checked.value);
+
     var mehilGroup = document.getElementById('mehilGroup');
     var dagitimGroup = document.getElementById('dagitimGroup');
     var yolAcemilikGroup = document.getElementById('yolAcemilikGroup');
     var yolTerhisGroup = document.getElementById('yolTerhisGroup');
+    var turGroup = document.getElementById('turGroup');
 
     if (months === 12) {
-        if (mehilGroup) mehilGroup.style.display = '';
-    } else {
+        // UZUN DÖNEM: sadece tür ve acemilik yol
+        if (turGroup) turGroup.style.display = '';
         if (mehilGroup) mehilGroup.style.display = 'none';
+        if (dagitimGroup) dagitimGroup.style.display = 'none';
+        if (yolAcemilikGroup) yolAcemilikGroup.style.display = '';
+        if (yolTerhisGroup) yolTerhisGroup.style.display = 'none';
+    } else {
+        // KISA DÖNEM: tür yok, dağıtım+yol var
+        if (turGroup) turGroup.style.display = 'none';
+        if (mehilGroup) mehilGroup.style.display = 'none';
+        if (dagitimGroup) dagitimGroup.style.display = '';
+        if (yolAcemilikGroup) yolAcemilikGroup.style.display = '';
+        if (yolTerhisGroup) yolTerhisGroup.style.display = '';
     }
-    if (dagitimGroup) dagitimGroup.style.display = '';
-    if (yolAcemilikGroup) yolAcemilikGroup.style.display = '';
-    if (yolTerhisGroup) yolTerhisGroup.style.display = '';
 }
 
 function updateIzinInfoText() {
@@ -147,16 +158,18 @@ function updateIzinInfoText() {
     var months = parseInt(checked.value);
     var text = document.getElementById('izinInfoText');
     if (!text) return;
+
     var startDate = document.getElementById('startDate').value;
     var realDays = '';
     if (startDate) {
         var days = calculateRealDuration(startDate, months);
         realDays = ' (Seçilen tarihe göre: <b>' + days + ' gün</b>)';
     }
+
     if (months === 6) {
-        text.innerHTML = '📖 <b>Madde 27:</b> 6 ay için ayda 1 gün = <b>Toplam 6 gün</b> izin hakkı.' + realDays;
+        text.innerHTML = '📖 <b>Madde 27:</b> 6 ay için ayda 1 gün = <b>Toplam 6 gün</b> izin hakkı. Dağıtım izni bu haktan düşülür.' + realDays;
     } else {
-        text.innerHTML = '📖 <b>Madde 27:</b> İlk 6 ay ayda 1 gün (6) + Son 6 ay ayda 2 gün (12) = <b>Toplam 18 gün</b> izin hakkı.' + realDays;
+        text.innerHTML = '📖 Uzun dönemde izin hakkı görev türüne göre değişir. Meslekçi: <b>30 gün</b>, Takım Komutanı: <b>28 gün</b>. Kullanılmayan izinler şafaktan düşer.' + realDays;
     }
 }
 
@@ -289,6 +302,11 @@ function createProfile() {
     var yolTerhis = parseInt(document.querySelector('input[name="yolTerhis"]:checked').value);
     var dagitimGun = parseInt(document.querySelector('input[name="dagitim"]:checked').value);
     var mehil = 0;
+    var tur = 'meslekci';
+    if (months === 12) {
+        var turChecked = document.querySelector('input[name="tur"]:checked');
+        tur = turChecked ? turChecked.value : 'meslekci';
+    }
     if (months === 12) { var mc = document.querySelector('input[name="mehil"]:checked'); mehil = mc ? parseInt(mc.value) : 1; }
     var saglikDurum = document.querySelector('input[name="saglikDurum"]:checked').value;
     var saglikGun = 0, saglikSayilan = 0;
@@ -297,7 +315,7 @@ function createProfile() {
 
     if (!name) { alert('Lütfen ad soyad girin!'); return; }
     if (!startDateVal) { alert('Lütfen sevk tarihi seçin!'); return; }
-    var totalIzinHakki = getTotalIzinHakki(months);
+    var totalIzinHakki = getTotalIzinHakki(months, tur);
     if (dagitimGun + usedIzin > totalIzinHakki) { alert('Toplam izin hakkı (' + totalIzinHakki + ') aşılamaz!'); return; }
     if (usedIzin < 0) usedIzin = 0;
     if (mazeretIzin < 0) mazeretIzin = 0;
@@ -305,10 +323,22 @@ function createProfile() {
 
     var profile = {
         id: 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        name: name, startDate: startDateVal, durationType: months, duration: calculateRealDuration(startDateVal, months),
-        dagitimGun: dagitimGun, yolAcemilik: yolAcemilik, yolTerhis: yolTerhis, mehil: mehil,
-        usedIzin: usedIzin, mazeretIzin: mazeretIzin, saglikGun: saglikGun, saglikSayilan: saglikSayilan,
-        katilisDate: katilisDate, cezalar: [], favorites: []
+        name: name,
+        startDate: startDateVal,
+        durationType: months,
+        duration: calculateRealDuration(startDateVal, months),
+        tur: tur,                    // ← YENİ
+        dagitimGun: dagitimGun,
+        yolAcemilik: yolAcemilik,
+        yolTerhis: yolTerhis,
+        mehil: mehil,
+        usedIzin: usedIzin,
+        mazeretIzin: mazeretIzin,
+        saglikGun: saglikGun,
+        saglikSayilan: saglikSayilan,
+        katilisDate: katilisDate,
+        cezalar: [],
+        favorites: []
     };
     var profiles = getAllProfiles();
     profiles.push(profile);
@@ -326,6 +356,7 @@ function loadProfile(profile) {
     if (typeof profile.saglikSayilan === 'undefined') profile.saglikSayilan = 0;
     if (typeof profile.mehil === 'undefined') profile.mehil = 1;
     if (typeof profile.katilisDate === 'undefined') profile.katilisDate = null;
+    if (typeof profile.tur === 'undefined') profile.tur = 'meslekci';
     if (!profile.cezalar) profile.cezalar = [];
     if (!profile.favorites) profile.favorites = [];
     if (!profile.durationType) {
@@ -358,16 +389,19 @@ function calculateInfo(profile) {
     var startDate = new Date(profile.startDate + 'T00:00:00');
     var now = new Date(); now.setHours(0, 0, 0, 0);
     var baseDuration = calculateRealDuration(profile.startDate, months);
-    var totalCeza = profile.cezalar.reduce(function (s, c) { return s + c.gun; }, 0);
-    var totalIzinHakki = getTotalIzinHakki(months);
-    var dagitimGun = profile.dagitimGun || 0;
+    var totalCeza = (months === 12) ? 0 : profile.cezalar.reduce(function (s, c) { return s + c.gun; }, 0);
+    var tur = profile.tur || 'meslekci';
+    var totalIzinHakki = getTotalIzinHakki(months, tur);
     var usedIzin = profile.usedIzin || 0;
+
+    var dagitimGun = (months === 12) ? 0 : (profile.dagitimGun || 0);
+
     var toplamKullanilan = Math.min(dagitimGun + usedIzin, totalIzinHakki);
     var unusedIzin = Math.max(0, totalIzinHakki - toplamKullanilan);
     var yolAcemilik = profile.yolAcemilik || profile.yol || 0;
-    var yolTerhis = profile.yolTerhis || profile.yol || 0;
-    var yolIndirim = 0, mehilAktif = false;
-    if (months === 12 && profile.mehil === 1) { mehilAktif = true; } else { yolIndirim = yolTerhis; }
+    var yolTerhis = (months === 12) ? 0 : (profile.yolTerhis || profile.yol || 0);
+    var yolIndirim = yolTerhis;
+    var mehilAktif = false; 
     var saglikEklenen = Math.max(0, (profile.saglikGun || 0) - (profile.saglikSayilan || 0));
     var gecGun = calculateGecGun(profile);
     var totalIndirim = unusedIzin + yolIndirim;
@@ -386,7 +420,7 @@ function calculateInfo(profile) {
         elapsed: elapsed, remaining: remaining, completed: completed, pct: pct,
         baseDuration: baseDuration, effectiveTotal: effectiveTotal, waitDays: waitDays, currentPlate: currentPlate,
         inPlatePhase: elapsed >= waitDays && remaining > 0, inWaitPhase: elapsed >= 0 && elapsed < waitDays,
-        notStarted: elapsed < 0, finished: remaining <= 0, months: months,
+        notStarted: elapsed < 0, finished: remaining <= 0, months: months,tur: tur,
         totalIzinHakki: totalIzinHakki, dagitimGun: dagitimGun, usedIzin: usedIzin,
         toplamKullanilan: toplamKullanilan, unusedIzin: unusedIzin,
         yolAcemilik: yolAcemilik, yolTerhis: yolTerhis, yolIndirim: yolIndirim, mehilAktif: mehilAktif,
@@ -423,29 +457,48 @@ function update() {
     p1.classList.toggle('active-phase', I.inWaitPhase);
     p2.classList.toggle('active-phase', I.inPlatePhase);
 
+    // İzin hakkı (her zaman göster)
     document.getElementById('extraIzinHakki').textContent = I.totalIzinHakki + ' gün';
+
+    // Dağıtım izni (sadece kısa dönem)
     var dagitimBox = document.getElementById('dagitimBox');
-    dagitimBox.style.display = '';
-    document.getElementById('extraDagitim').textContent = I.dagitimGun > 0 ? I.dagitimGun + ' gün' : 'Yok';
+    if (I.months === 12) {
+        dagitimBox.style.display = 'none';
+    } else {
+        dagitimBox.style.display = '';
+        document.getElementById('extraDagitim').textContent = I.dagitimGun > 0 ? I.dagitimGun + ' gün' : 'Yok';
+    }
+
+    // Normal izin
     document.getElementById('extraNormalIzin').textContent = I.usedIzin + '/' + Math.max(0, I.totalIzinHakki - I.dagitimGun) + ' gün';
+
+    // Kullanılmayan izin
     document.getElementById('extraUnusedIzin').textContent = I.unusedIzin > 0 ? '-' + I.unusedIzin + ' gün ✂️' : '0 gün ✓';
 
+    // Yol izinleri
     var yolAcemilikBox = document.getElementById('yolAcemilikBox');
     var yolTerhisBox = document.getElementById('yolTerhisBox');
     var mehilBox = document.getElementById('mehilBox');
+    mehilBox.style.display = 'none';
     document.getElementById('extraYolAcemilik').textContent = I.yolAcemilik + ' gün';
-    if (I.months === 12 && I.mehilAktif) {
-        yolTerhisBox.style.display = 'none'; yolAcemilikBox.style.display = 'none';
-        mehilBox.style.display = ''; document.getElementById('extraMehil').textContent = 'Hizmetten sayılır ✓';
+
+    if (I.months === 12) {
+        // Uzun dönem: sadece acemilik yol
+        yolAcemilikBox.style.display = '';
+        yolTerhisBox.style.display = 'none';
     } else {
-        yolTerhisBox.style.display = ''; yolAcemilikBox.style.display = '';
-        mehilBox.style.display = 'none'; document.getElementById('extraYolTerhis').textContent = '-' + I.yolTerhis + ' gün ✂️';
+        // Kısa dönem: ikisi de var
+        yolAcemilikBox.style.display = '';
+        yolTerhisBox.style.display = '';
+        document.getElementById('extraYolTerhis').textContent = '-' + I.yolTerhis + ' gün ✂️';
     }
 
+    // Mazeret izni
     var mazeretBox = document.getElementById('mazeretBox');
     if (I.mazeretIzin > 0) { mazeretBox.style.display = ''; document.getElementById('extraMazeret').textContent = I.mazeretIzin + ' gün (bilgi)'; }
     else { mazeretBox.style.display = 'none'; }
 
+    // Sağlık raporu
     var saglikBox = document.getElementById('saglikBox');
     if (I.saglikGun > 0) {
         saglikBox.style.display = '';
@@ -453,14 +506,29 @@ function update() {
         else { document.getElementById('extraSaglik').textContent = I.saglikGun + ' gün (hizmetten)'; saglikBox.classList.remove('negative'); saglikBox.classList.add('info-box'); }
     } else { saglikBox.style.display = 'none'; }
 
+    // Geç katılış
     var gecBox = document.getElementById('gecBox');
     if (I.gecGun > 0) { gecBox.style.display = ''; document.getElementById('extraGec').textContent = '+' + I.gecGun + ' gün'; }
     else { gecBox.style.display = 'none'; }
 
-    document.getElementById('extraCeza').textContent = '+' + I.totalCeza + ' gün';
-    document.getElementById('cezaBoxWrapper').classList.toggle('has-ceza', I.totalCeza > 0);
+    // Ceza (sadece kısa dönem)
+    var cezaBox = document.getElementById('cezaBoxWrapper');
+    if (I.months === 12) {
+        cezaBox.style.display = 'none';
+    } else {
+        cezaBox.style.display = '';
+        document.getElementById('extraCeza').textContent = '+' + I.totalCeza + ' gün';
+        cezaBox.classList.toggle('has-ceza', I.totalCeza > 0);
+    }
 
-    var sp = []; sp.push('Askerlik: <b>' + I.baseDuration + '</b> gün (' + I.months + ' ay)');
+    // Özet satırı
+    var sp = [];
+    var turStr = '';
+    if (I.months === 12) {
+        turStr = ' - ' + (I.tur === 'tk' ? 'T.K.' : 'Meslekçi');
+    }
+    sp.push('Askerlik: <b>' + I.baseDuration + '</b> gün (' + I.months + ' ay' + turStr + ')');
+
     if (I.totalCeza > 0) sp.push('<span class="neg">+ ' + I.totalCeza + ' ceza</span>');
     if (I.saglikEklenen > 0) sp.push('<span class="neg">+ ' + I.saglikEklenen + ' sağlık</span>');
     if (I.gecGun > 0) sp.push('<span class="neg">+ ' + I.gecGun + ' geç katılış</span>');
@@ -469,10 +537,19 @@ function update() {
     sp.push('= <b>' + I.effectiveTotal + ' gün</b> efektif');
     var st = sp.join(' ');
     if (I.dagitimGun > 0) st += '<br><small style="color:#fcd34d">🎫 Dağıtım ' + I.dagitimGun + ' gün (izinden düşüldü)</small>';
-    if (I.mehilAktif) st += '<br><small style="color:#60a5fa">🏠 Mehil izni hizmetten sayıldı</small>';
     if (I.mazeretIzin > 0) st += '<br><small style="color:#a78bfa">🏥 Mazeret ' + I.mazeretIzin + ' gün</small>';
     if (I.gecGun > 0) st += '<br><small style="color:#fca5a5">⏰ Geç katılış ' + I.gecGun + ' gün</small>';
     document.getElementById('extrasSummary').innerHTML = st;
+
+    // Ceza geçmişi başlığı ve listesi (sadece kısa dönem)
+    var cezaTitles = document.querySelectorAll('.hist-title');
+    var cezaList = document.getElementById('cezaList');
+    cezaTitles.forEach(function (t) {
+        if (t.textContent.indexOf('CEZA') !== -1) {
+            t.style.display = (I.months === 12) ? 'none' : '';
+        }
+    });
+    if (cezaList) cezaList.style.display = (I.months === 12) ? 'none' : '';
 
     updateTodayCard(I); updateMapColors(I); renderHistory(I); renderFavorites(); updateMapFavorites(); renderCezalar();
 }
@@ -521,11 +598,22 @@ function renderCezalar() {
 // ===== İZİN GÜNCELLEME =====
 function showIzinModal() {
     if (!currentProfile) return;
+
     var months = getMonths(currentProfile);
-    var totalHakki = getTotalIzinHakki(months);
-    var dagitimGun = currentProfile.dagitimGun || 0;
+    var tur = currentProfile.tur || 'meslekci';
+    var totalHakki = getTotalIzinHakki(months, tur);
+    var dagitimGun = (months === 12) ? 0 : (currentProfile.dagitimGun || 0);
     var kalanHak = Math.max(0, totalHakki - dagitimGun);
-    document.getElementById('izinInfoLabel').innerHTML = 'Toplam: <b>' + totalHakki + '</b> · Dağıtım: <b>' + dagitimGun + '</b> · Kalan: <b>' + kalanHak + '</b>';
+
+    var infoText = 'Toplam: <b>' + totalHakki + '</b>';
+    if (months === 12) {
+        infoText += ' (' + (tur === 'tk' ? 'T.K.' : 'Meslekçi') + ')';
+    } else {
+        infoText += ' · Dağıtım: <b>' + dagitimGun + '</b>';
+    }
+    infoText += ' · Kalan: <b>' + kalanHak + '</b>';
+
+    document.getElementById('izinInfoLabel').innerHTML = infoText;
     var input = document.getElementById('editUsedIzin'); input.value = currentProfile.usedIzin || 0; input.max = kalanHak;
     updateIzinPreview(); input.oninput = updateIzinPreview;
     document.getElementById('izinModal').classList.add('active');
@@ -533,14 +621,33 @@ function showIzinModal() {
 function closeIzinModal() { document.getElementById('izinModal').classList.remove('active'); }
 function updateIzinPreview() {
     var val = parseInt(document.getElementById('editUsedIzin').value) || 0;
-    var months = getMonths(currentProfile); var totalHakki = getTotalIzinHakki(months);
-    var dagitimGun = currentProfile.dagitimGun || 0;
+    var months = getMonths(currentProfile);
+    var tur = currentProfile.tur || 'meslekci';
+    var totalHakki = getTotalIzinHakki(months, tur);
+    var dagitimGun = (months === 12) ? 0 : (currentProfile.dagitimGun || 0);
     var kullanilmayan = Math.max(0, totalHakki - dagitimGun - val);
-    document.getElementById('izinPreview').innerHTML = '<div class="prev-row"><span>Toplam Hak:</span><span class="val">' + totalHakki + '</span></div><div class="prev-row"><span>Dağıtım:</span><span class="val">' + dagitimGun + '</span></div><div class="prev-row"><span>Normal İzin:</span><span class="val">' + val + '</span></div><div class="prev-row"><span>Kullanılmayan:</span><span class="val neg">-' + kullanilmayan + '</span></div>';
+
+    var html = '<div class="prev-row"><span>Toplam Hak:</span><span class="val">' + totalHakki + '</span></div>';
+
+    if (months === 12) {
+        // Uzun dönem: tür bilgisi göster, dağıtım gösterme
+        html += '<div class="prev-row"><span>Görev:</span><span class="val">' + (tur === 'tk' ? 'T.K.' : 'Meslekçi') + '</span></div>';
+    } else {
+        // Kısa dönem: dağıtım göster
+        html += '<div class="prev-row"><span>Dağıtım:</span><span class="val">' + dagitimGun + '</span></div>';
+    }
+
+    html += '<div class="prev-row"><span>Normal İzin:</span><span class="val">' + val + '</span></div>';
+    html += '<div class="prev-row"><span>Kullanılmayan:</span><span class="val neg">-' + kullanilmayan + '</span></div>';
+
+    document.getElementById('izinPreview').innerHTML = html;
 }
 function saveIzin() {
     var val = parseInt(document.getElementById('editUsedIzin').value) || 0;
-    var months = getMonths(currentProfile); var kalanHak = Math.max(0, getTotalIzinHakki(months) - (currentProfile.dagitimGun || 0));
+    var months = getMonths(currentProfile);
+    var tur = currentProfile.tur || 'meslekci';
+    var dagitimGun = (months === 12) ? 0 : (currentProfile.dagitimGun || 0);
+    var kalanHak = Math.max(0, getTotalIzinHakki(months, tur) - dagitimGun);
     if (val < 0 || val > kalanHak) { alert('Geçersiz değer!'); return; }
     currentProfile.usedIzin = val; saveCurrentProfile(); closeIzinModal(); update();
 }
@@ -676,7 +783,10 @@ function updateMapColors(I) {
 function renderHistory(I) {
     var list = document.getElementById('histList'); list.innerHTML = '';
     if (!I.inPlatePhase && !I.finished) { list.innerHTML = '<p class="empty-msg">İl sayacı henüz başlamadı.</p>'; return; }
-    for (var plate = 81; plate >= (I.finished ? 1 : I.currentPlate); plate--) {
+
+    var startPlate = I.finished ? 1 : I.currentPlate;
+
+    for (var plate = startPlate; plate <= 81; plate++) {
         var city = findCity(plate); if (!city) continue;
         var armyDay = I.waitDays + (81 - plate) + 1, d = new Date(I.startDate); d.setDate(d.getDate() + (armyDay - 1));
         var st = (I.finished || plate > I.currentPlate) ? '✅' : plate === I.currentPlate ? '📍' : '';

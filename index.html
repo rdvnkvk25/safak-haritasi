@@ -77,6 +77,23 @@
                     💡 Yıllık izin hakkı otomatik hesaplanır.
                 </small>
             </div>
+            <!-- UZUN DÖNEM TÜR SEÇİMİ -->
+            <div class="inp-group" id="turGroup" style="display:none">
+                <label>Görev Türü:</label>
+                <small class="info-text">
+                    📖 Meslekçi ve Takım Komutanı için farklı izin hakları geçerlidir.
+                </small>
+                <div class="radio-group">
+                    <label class="radio-opt">
+                        <input type="radio" name="tur" value="meslekci" checked>
+                        <span>Meslekçi (28 + 2 = <b>30 gün izin</b>)</span>
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="tur" value="tk">
+                        <span>Takım Komutanı (26 + 2 = <b>28 gün izin</b>)</span>
+                    </label>
+                </div>
+            </div>
 
             <!-- DAĞITIM İZNİ -->
             <div class="inp-group" id="dagitimGroup">
