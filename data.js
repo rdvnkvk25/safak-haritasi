@@ -3,7 +3,6 @@ var TOTAL_DAYS = 180;
 var PLATE_DAYS = 81;
 var WAIT_DAYS = TOTAL_DAYS - PLATE_DAYS;
 
-// GeoJSON'daki il isimlerini plaka koduna eşleştir
 var CITY_NAME_TO_PLATE = {
     "adana": "01", "adiyaman": "02", "afyonkarahisar": "03", "afyon": "03",
     "agri": "04", "ağrı": "04", "amasya": "05", "ankara": "06",

@@ -1,11 +1,7 @@
-/* =============================================
-   ASKER ŞAFAK HARİTASI - SERVICE WORKER
-   Offline PWA Desteği
-   ============================================= */
 
-var CACHE_NAME = 'safak-haritasi-v21';
+var CACHE_NAME = 'safak-haritasi-v22';
 
-// Temel dosyalar (install sırasında cache'lenir)
+
 var CORE_FILES = [
     './',
     './index.html',
@@ -17,10 +13,8 @@ var CORE_FILES = [
     './icon.svg'
 ];
 
-// Google Fonts URL'leri (install sırasında cache'lenir)
-var FONT_CSS = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap';
 
-// ===== INSTALL =====
+var FONT_CSS = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap';
 self.addEventListener('install', function (event) {
     console.log('🎖️ SW: Yükleniyor...');
     event.waitUntil(
@@ -28,7 +22,6 @@ self.addEventListener('install', function (event) {
             console.log('🎖️ SW: Temel dosyalar cache\'leniyor');
             return cache.addAll(CORE_FILES);
         }).then(function () {
-            // Font CSS'ini de cache'le (opsiyonel, hata verirse devam et)
             return caches.open(CACHE_NAME).then(function (cache) {
                 return cache.add(FONT_CSS).catch(function () {
                     console.log('🎖️ SW: Font cache\'lenemedi, sorun değil');
@@ -40,7 +33,6 @@ self.addEventListener('install', function (event) {
     );
 });
 
-// ===== ACTIVATE =====
 self.addEventListener('activate', function (event) {
     console.log('🎖️ SW: Aktif edildi');
     event.waitUntil(
@@ -58,16 +50,10 @@ self.addEventListener('activate', function (event) {
         })
     );
 });
-
-// ===== FETCH =====
-// Strateji: Cache-first, network fallback
-// İlk ziyarette her şey cache'lenir, sonra offline da çalışır
 self.addEventListener('fetch', function (event) {
     event.respondWith(
         caches.match(event.request).then(function (cached) {
             if (cached) {
-                // Cache'te var → hemen döndür
-                // Arka planda güncelle (stale-while-revalidate)
                 var fetchPromise = fetch(event.request).then(function (response) {
                     if (response && response.status === 200) {
                         var responseClone = response.clone();
@@ -77,19 +63,14 @@ self.addEventListener('fetch', function (event) {
                     }
                     return response;
                 }).catch(function () {
-                    // Network hatası, önemli değil
                 });
 
                 return cached;
             }
-
-            // Cache'te yok → network'ten al ve cache'le
             return fetch(event.request).then(function (response) {
                 if (!response || response.status !== 200) {
                     return response;
                 }
-
-                // Sadece aynı origin veya fonts isteklerini cache'le
                 var url = event.request.url;
                 var shouldCache = url.startsWith(self.location.origin) ||
                                   url.includes('fonts.googleapis.com') ||
@@ -104,8 +85,6 @@ self.addEventListener('fetch', function (event) {
 
                 return response;
             }).catch(function () {
-                // Tamamen offline ve cache'te yok
-                // HTML isteklerinde offline sayfası göster
                 if (event.request.headers.get('accept') &&
                     event.request.headers.get('accept').includes('text/html')) {
                     return caches.match('./index.html');
